@@ -56,64 +56,7 @@ void MainWindow::onReplyFinished(QNetworkReply* reply)
     reply->deleteLater();
 }
 
-/**
- * 函数名：MainWindow::analyWeatherXML
- * 功能：解析Api返回的数据
- * 参数：QByteArray json
- * 返回值：无
- */
-void MainWindow::analyWeatherXML(QByteArray json)
-{
-    if(json.isEmpty())
-        return ;
 
-    QString date[5] = {"NULL"}; //存储日期
-    QJsonParseError err;
-    QJsonDocument jsonDoc = QJsonDocument::fromJson(json, &err);
-
-    QJsonObject jsonObj = jsonDoc.object().value("data").toObject();
-    QJsonArray forecast = jsonObj.value("forecast").toArray();
-
-    QJsonObject cityInfo = jsonDoc.object().value("cityInfo").toObject();
-    ui->labelCity->setText(cityInfo.value("parent").toString() +
-                           cityInfo.value("city").toString());
-    ui->labelTemperature->setText(jsonObj.value("wendu").toString());
-    ui->labelTime->setText("最后更新于：" +
-                           jsonDoc.object().value("time").toString());
-
-    QJsonObject yesterday = jsonObj.value("yesterday").toObject(); //昨天
-    ui->textBrowserYesterday->clear();
-    ui->textBrowserYesterday->append(JsonObj2String(yesterday));
-    date[0] = yesterday.value("ymd").toString();
-    ui->groupBoxYesterday->setTitle(date[0]);
-
-    QJsonObject today = forecast[0].toObject(); //今天
-    ui->textBrowserToday->clear();
-    ui->textBrowserToday->append(JsonObj2String(today));
-    ui->labelFengsu->setText("风向：" + today.value("fx").toString() +
-                             today.value("fl").toString());
-    dealIcon(jsonObj);
-    date[1] = today.value("ymd").toString();
-    ui->groupBoxToday->setTitle(date[1]);
-
-    QJsonObject tomorrow = forecast[1].toObject(); //明天
-    ui->textBrowserTomorrow->clear();
-    ui->textBrowserTomorrow->append(JsonObj2String(tomorrow));
-    date[2] = tomorrow.value("ymd").toString();
-    ui->groupBoxTomorrow->setTitle(date[2]);
-
-    QJsonObject day_3 = forecast[2].toObject(); //后天
-    ui->textBrowserDay_3->clear();
-    ui->textBrowserDay_3->append(JsonObj2String(day_3));
-    date[3] = day_3.value("ymd").toString();
-    ui->groupBoxDay_3->setTitle(date[3]);
-
-    QJsonObject day_4 = forecast[3].toObject(); //大后天
-    ui->textBrowserDay_4->clear();
-    ui->textBrowserDay_4->append(JsonObj2String(day_4));
-    date[4] = day_4.value("ymd").toString();
-    ui->groupBoxDay_4->setTitle(date[4]);
-}
 
 /**
  * 函数名：MainWindow::JsonObj2String
